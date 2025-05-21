@@ -6,7 +6,8 @@ from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.db import transaction
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, ProductForm
-from .models import Product, Farm, Profile
+from .models import Product, Farm, Profile, ProductCategory, Order, OrderItem, Review
+import json
 
 
 def home(request):
@@ -30,6 +31,17 @@ def register(request):
     else:
         form = UserRegisterForm()
     return render(request, 'marketplace/auth/register.html', {'form': form})
+
+def search(request):
+    query = request.GET.get('q', '')
+    products = Product.objects.filter(name__icontains=query) if query else []
+    
+    context = {
+        'products': products,
+        'query': query,
+        'title': f'Search: {query}'
+    }
+    return render(request, 'marketplace/search.html', context)
 
 def user_login(request):
     if request.method == 'POST':
