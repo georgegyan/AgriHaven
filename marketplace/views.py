@@ -148,6 +148,26 @@ def product_detail(request, pk):
     }
     return render(request, 'marketplace/product_detail.html', context)
 
+def farm_detail(request, pk):
+    farm = get_object_or_404(Farm, pk=pk)
+    products = Product.objects.filter(farm=farm, stock__gt=0)
+    
+    context = {
+        'farm': farm,
+        'products': products,
+        'title': farm.name
+    }
+    return render(request, 'marketplace/farm_detail.html', context)
+
+def farm_list(request):
+    farms = Farm.objects.all()
+    
+    context = {
+        'farms': farms,
+        'title': 'Our Farms'
+    }
+    return render(request, 'marketplace/farm_list.html', context)
+
 def cart(request):
     if request.user.is_authenticated:
         customer = request.user

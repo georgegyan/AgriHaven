@@ -1,0 +1,21 @@
+{% extends 'marketplace/base.html' %}
+
+{% block content %}
+<h2 class="fw-bold mb-4">Our Local Farms</h2>
+
+<div class="row g-4">
+    {% for farm in farms %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100">
+            <img src="{{ farm.image.url }}" class="card-img-top" alt="{{ farm.name }}" style="height: 200px; object-fit: cover;">
+            <div class="card-body">
+                <h5 class="card-title">{{ farm.name }}</h5>
+                <p class="text-muted">{{ farm.location }}</p>
+                <p class="card-text">{{ farm.description|truncatechars:100 }}</p>
+                <a href="{% url 'farm_detail' farm.id %}" class="btn btn-sm btn-outline-success">View Farm</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
