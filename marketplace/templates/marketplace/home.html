@@ -1,0 +1,61 @@
+{% extends 'marketplace/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section position-relative text-white mb-5">
+    <img src="{% static 'images/farm-produce.jpg' %}" alt="Fresh produce" class="img-fluid w-100" style="height: 500px; object-fit: cover;">
+    <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark opacity-50"></div>
+    <div class="position-absolute top-50 start-50 translate-middle text-center w-100 px-3">
+        <h1 class="display-4 fw-bold mb-4">Buy Directly From Local Farmers <i class="bi bi-truck"></i></h1>
+        <a href="{% url 'shop' %}" class="btn btn-success btn-lg px-4">Shop Now</a>
+    </div>
+</section>
+
+<!-- Featured Products -->
+<section class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Featured Products</h2>
+        <a href="{% url 'shop' %}" class="btn btn-outline-success">View All</a>
+    </div>
+    <div class="row g-4">
+        {% for product in featured_products %}
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100">
+                {% if product.is_organic %}
+                <span class="badge bg-success position-absolute top-0 end-0 m-2">Organic</span>
+                {% endif %}
+                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 180px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="text-muted">{{ product.farm.name }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-bold">GHS{{ product.price }}</span>
+                        <button class="btn btn-sm btn-success">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Local Farms -->
+<section class="mb-5">
+    <h2 class="fw-bold mb-4">Our Local Farms</h2>
+    <div class="row g-4">
+        {% for farm in farms %}
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100">
+                <img src="{{ farm.image.url }}" class="card-img-top" alt="{{ farm.name }}" style="height: 180px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ farm.name }}</h5>
+                    <p class="text-muted">{{ farm.location }}</p>
+                    <a href="{% url 'farm_detail' farm.id %}" class="btn btn-sm btn-outline-success">View Farm</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

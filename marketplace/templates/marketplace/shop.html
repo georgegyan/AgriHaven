@@ -1,0 +1,121 @@
+{% extends 'marketplace/base.html' %}
+
+{% block content %}
+<div class="row">
+    <!-- Filters Sidebar -->
+    <div class="col-md-3">
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5>Filters</h5>
+            </div>
+            <div class="card-body">
+                <h6>Categories</h6>
+                <ul class="list-unstyled">
+                    <li><a href="{% url 'shop' %}" class="text-decoration-none">All Categories</a></li>
+                    {% for category in categories %}
+                    <li><a href="?category={{ category.id }}" class="text-decoration-none">{{ category.name }}</a></li>
+                    {% endfor %}
+                </ul>
+                <hr>
+                <h6>Price Range</h6>
+                <div class="range-slider">
+                    <input type="range" class="form-range" min="0" max="100" id="priceRange">
+                    <div class="d-flex justify-content-between">
+                        <span>GHS0</span>
+                        <span>GHS100+</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Product Listing -->
+    <div class="col-md-9">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold">All Products</h2>
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    Sort By
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="?sort=price_asc">Price: Low to High</a></li>
+                    <li><a class="dropdown-item" href="?sort=price_desc">Price: High to Low</a></li>
+                    <li><a class="dropdown-item" href="?sort=newest">Newest</a></li>
+                    <li><a class="dropdown-item" href="?sort=popular">Most Popular</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            {% for product in products %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100">
+                    {% if product.is_organic %}
+                    <span class="badge bg-success position-absolute top-0 end-0 m-2">Organic</span>
+                    {% endif %}
+                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="text-muted">{{ product.farm.name }} • 5 miles away</p>
+                        <div class="mb-2">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star text-warning"></i>
+                            <span class="ms-1">(24)</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold">GHS{{ product.price }}</span>
+                            <button class="btn btn-sm btn-success">Add to Cart</button>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="{% url 'product_detail' product.id %}" class="btn btn-sm btn-outline-success w-100">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if products.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1" aria-label="First">
+                        <span aria-hidden="true">&laquo;&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ products.previous_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+                
+                {% for num in products.paginator.page_range %}
+                {% if products.number == num %}
+                <li class="page-item active"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                {% elif num > products.number|add:'-3' and num < products.number|add:'3' %}
+                <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                {% endif %}
+                {% endfor %}
+                
+                {% if products.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ products.next_page_number }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ products.paginator.num_pages }}" aria-label="Last">
+                        <span aria-hidden="true">&raquo;&raquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</div>
+{% endblock %}
