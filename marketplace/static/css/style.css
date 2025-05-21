@@ -1,0 +1,47 @@
+/* Custom CSS for AgriHaven */
+.hero-section {
+    position: relative;
+    overflow: hidden;
+}
+
+.card {
+    transition: transform 0.3s;
+    border: none;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.bg-success {
+    background-color: #28a745 !important;
+}
+
+.navbar {
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.footer {
+    background-color: #343a40;
+}
+
+.social-links a {
+    font-size: 1.2rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-section img {
+        height: 300px !important;
+    }
+    
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+}
