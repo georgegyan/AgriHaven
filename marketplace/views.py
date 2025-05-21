@@ -4,8 +4,9 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import JsonResponse
+from django.db import transaction
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, ProductForm
-from .models import Product, Farm
+from .models import Product, Farm, Profile
 
 
 def home(request):
@@ -94,6 +95,19 @@ def farmer_dashboard(request):
         'title': 'Farmer Dashboard'
     }
     return render(request, 'marketplace/farmer/dashboard.html', context)
+
+@transaction.atomic
+def register(request):
+    if request.method == 'POST':
+        form = UserRegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            Profile.objects.create(user=user)
+            login(request, user)
+            return redirect('home')
+    else:
+        form = UserRegisterForm()
+    return render(request, 'marketplace/auth/register.html', {'form': form})
 
 def shop(request):
     products = Product.objects.filter(stock__gt=0).order_by('-date_added')
