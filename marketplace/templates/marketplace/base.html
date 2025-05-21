@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,7 +22,6 @@
                         <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'shop' %}">Shop</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'farms' %}">Farms</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'blog' %}">Blog</a></li>
                     </ul>
                     <form class="d-flex me-2" action="{% url 'search' %}" method="GET">
                         <input class="form-control me-2" type="search" name="q" placeholder="Find carrots, apples, milk...">
