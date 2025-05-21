@@ -1,0 +1,150 @@
+{% extends 'marketplace/base.html' %}
+
+{% block content %}
+<div class="row mb-5">
+    <!-- Product Images -->
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 400px; object-fit: cover;">
+        </div>
+        <div class="row g-2">
+            <div class="col-3">
+                <img src="{{ product.image.url }}" class="img-thumbnail" alt="{{ product.name }}" style="height: 80px; object-fit: cover;">
+            </div>
+            <!-- Add more thumbnails here if you have multiple images -->
+        </div>
+    </div>
+    
+    <!-- Product Info -->
+    <div class="col-md-6">
+        {% if product.is_organic %}
+        <span class="badge bg-success mb-2">Organic</span>
+        {% endif %}
+        <h2 class="fw-bold">{{ product.name }}</h2>
+        <div class="mb-3">
+            <i class="bi bi-star-fill text-warning"></i>
+            <i class="bi bi-star-fill text-warning"></i>
+            <i class="bi bi-star-fill text-warning"></i>
+            <i class="bi bi-star-fill text-warning"></i>
+            <i class="bi bi-star text-warning"></i>
+            <span class="ms-1">(24 reviews)</span>
+        </div>
+        
+        <h4 class="text-success mb-3">GHS{{ product.price }}</h4>
+        
+        <div class="mb-4">
+            <span class="fw-bold">Availability:</span>
+            {% if product.stock > 0 %}
+            <span class="text-success">In Stock ({{ product.stock }} units)</span>
+            {% else %}
+            <span class="text-danger">Out of Stock</span>
+            {% endif %}
+        </div>
+        
+        <p class="mb-4">{{ product.description }}</p>
+        
+        <div class="d-flex align-items-center mb-4">
+            <div class="me-3">
+                <label class="form-label">Quantity:</label>
+                <input type="number" class="form-control" value="1" min="1" max="{{ product.stock }}" style="width: 80px;">
+            </div>
+            <button class="btn btn-success btn-lg">Add to Cart</button>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="d-flex">
+                    <img src="{{ product.farm.image.url }}" class="rounded-circle me-3" width="60" height="60" style="object-fit: cover;">
+                    <div>
+                        <h5>{{ product.farm.name }}</h5>
+                        <p class="text-muted mb-1">{{ product.farm.location }}</p>
+                        <a href="{% url 'farm_detail' product.farm.id %}" class="btn btn-sm btn-outline-success">View Farm</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reviews Section -->
+<div class="card mb-5">
+    <div class="card-header bg-light">
+        <h5 class="mb-0">Customer Reviews</h5>
+    </div>
+    <div class="card-body">
+        {% if reviews %}
+            {% for review in reviews %}
+            <div class="mb-4 pb-3 border-bottom">
+                <div class="d-flex justify-content-between mb-2">
+                    <h6>{{ review.user.username }}</h6>
+                    <div>
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= review.rating %}
+                            <i class="bi bi-star-fill text-warning"></i>
+                            {% else %}
+                            <i class="bi bi-star text-warning"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <p class="text-muted">{{ review.created_at|date:"F d, Y" }}</p>
+                <p>{{ review.comment }}</p>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No reviews yet. Be the first to review!</p>
+        {% endif %}
+        
+        {% if user.is_authenticated %}
+        <div class="mt-4">
+            <h6>Write a Review</h6>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Rating</label>
+                    <select class="form-select" name="rating">
+                        <option value="5">5 - Excellent</option>
+                        <option value="4">4 - Very Good</option>
+                        <option value="3">3 - Good</option>
+                        <option value="2">2 - Fair</option>
+                        <option value="1">1 - Poor</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Review</label>
+                    <textarea class="form-control" name="comment" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">Submit Review</button>
+            </form>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <a href="{% url 'login' %}">Login</a> to write a review.
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Related Products -->
+<h4 class="fw-bold mb-4">You May Also Like</h4>
+<div class="row g-4">
+    {% for product in related_products %}
+    <div class="col-md-6 col-lg-3">
+        <div class="card h-100">
+            {% if product.is_organic %}
+            <span class="badge bg-success position-absolute top-0 end-0 m-2">Organic</span>
+            {% endif %}
+            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 180px; object-fit: cover;">
+            <div class="card-body">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="text-muted">{{ product.farm.name }}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="fw-bold">GHS{{ product.price }}</span>
+                    <button class="btn btn-sm btn-success">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

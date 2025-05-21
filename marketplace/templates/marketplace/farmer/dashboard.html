@@ -1,0 +1,177 @@
+{% extends 'marketplace/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="row">
+    <!-- Sidebar -->
+    <div class="col-md-3">
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5>Dashboard</h5>
+            </div>
+            <div class="list-group list-group-flush">
+                <a href="#products" class="list-group-item list-group-item-action active" data-bs-toggle="tab">Products</a>
+                <a href="#orders" class="list-group-item list-group-item-action" data-bs-toggle="tab">Orders</a>
+                <a href="#add-product" class="list-group-item list-group-item-action" data-bs-toggle="tab">Add Product</a>
+                <a href="#farm-settings" class="list-group-item list-group-item-action" data-bs-toggle="tab">Farm Settings</a>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-body text-center">
+                <img src="{{ farm.image.url }}" class="rounded-circle mb-3" width="100" height="100" style="object-fit: cover;">
+                <h5>{{ farm.name }}</h5>
+                <p class="text-muted">{{ farm.location }}</p>
+                <div class="d-grid">
+                    <a href="{% url 'farm_detail' farm.id %}" class="btn btn-outline-success btn-sm">View Public Profile</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="col-md-9">
+        <div class="card">
+            <div class="card-header bg-light">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Farm Dashboard</h5>
+                    <span class="badge bg-success">Active</span>
+                </div>
+            </div>
+            
+            <div class="card-body">
+                <div class="tab-content">
+                    <!-- Products Tab -->
+                    <div class="tab-pane fade show active" id="products">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5>Your Products</h5>
+                            <a href="#add-product" class="btn btn-sm btn-success" data-bs-toggle="tab">Add New</a>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Name</th>
+                                        <th>Price</th>
+                                        <th>Stock</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for product in products %}
+                                    <tr>
+                                        <td><img src="{{ product.image.url }}" width="50" height="50" style="object-fit: cover;"></td>
+                                        <td>{{ product.name }}</td>
+                                        <td>GHS{{ product.price }}</td>
+                                        <td>{{ product.stock }}</td>
+                                        <td>
+                                            {% if product.stock > 0 %}
+                                            <span class="badge bg-success">In Stock</span>
+                                            {% else %}
+                                            <span class="badge bg-danger">Out of Stock</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="#" class="btn btn-sm btn-outline-primary">Edit</a>
+                                            <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="6" class="text-center">No products yet. Add your first product!</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Orders Tab -->
+                    <div class="tab-pane fade" id="orders">
+                        <h5 class="mb-4">Recent Orders</h5>
+                        
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Customer</th>
+                                        <th>Date</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order in orders %}
+                                    <tr>
+                                        <td>#{{ order.id }}</td>
+                                        <td>{{ order.customer.username }}</td>
+                                        <td>{{ order.order_date|date:"M d, Y" }}</td>
+                                        <td>GHS{{ order.get_cart_total }}</td>
+                                        <td>
+                                            {% if order.complete %}
+                                            <span class="badge bg-success">Completed</span>
+                                            {% else %}
+                                            <span class="badge bg-warning">Pending</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="#" class="btn btn-sm btn-outline-primary">View</a>
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="6" class="text-center">No orders yet.</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Add Product Tab -->
+                    <div class="tab-pane fade" id="add-product">
+                        <h5 class="mb-4">Add New Product</h5>
+                        
+                        <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <button type="submit" class="btn btn-success">Save Product</button>
+                        </form>
+                    </div>
+                    
+                    <!-- Farm Settings Tab -->
+                    <div class="tab-pane fade" id="farm-settings">
+                        <h5 class="mb-4">Farm Settings</h5>
+                        
+                        <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label class="form-label">Farm Name</label>
+                                <input type="text" class="form-control" value="{{ farm.name }}">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Location</label>
+                                <input type="text" class="form-control" value="{{ farm.location }}">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Description</label>
+                                <textarea class="form-control" rows="4">{{ farm.description }}</textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Farm Image</label>
+                                <input type="file" class="form-control">
+                            </div>
+                            <button type="submit" class="btn btn-success">Update Settings</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

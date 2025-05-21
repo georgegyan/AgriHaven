@@ -1,9 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
+from django.http import JsonResponse
+from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, ProductForm
 from .models import Product, Farm
 
 
@@ -65,6 +66,35 @@ def profile(request):
     }
     return render(request, 'marketplace/auth/profile.html', context)
 
+@login_required
+def farmer_dashboard(request):
+    if not hasattr(request.user, 'farm'):
+        return redirect('home')
+    
+    farm = request.user.farm
+    products = Product.objects.filter(farm=farm)
+    orders = Order.objects.filter(orderitem__product__farm=farm).distinct()
+    
+    # Add product form
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            product = form.save(commit=False)
+            product.farm = farm
+            product.save()
+            return redirect('farmer_dashboard')
+    else:
+        form = ProductForm()
+    
+    context = {
+        'farm': farm,
+        'products': products,
+        'orders': orders,
+        'form': form,
+        'title': 'Farmer Dashboard'
+    }
+    return render(request, 'marketplace/farmer/dashboard.html', context)
+
 def shop(request):
     products = Product.objects.filter(stock__gt=0).order_by('-date_added')
     categories = ProductCategory.objects.all()
@@ -90,3 +120,71 @@ def shop(request):
         'title': 'Shop'
     }
     return render(request, 'marketplace/shop.html', context)
+
+def product_detail(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    related_products = Product.objects.filter(category=product.category).exclude(pk=pk)[:4]
+    reviews = product.review_set.all()
+    
+    context = {
+        'product': product,
+        'related_products': related_products,
+        'reviews': reviews,
+        'title': product.name
+    }
+    return render(request, 'marketplace/product_detail.html', context)
+
+def cart(request):
+    if request.user.is_authenticated:
+        customer = request.user
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        items = order.orderitem_set.all()
+    else:
+        items = []
+        order = {'get_cart_total': 0, 'get_cart_items': 0}
+    
+    context = {
+        'items': items,
+        'order': order,
+        'title': 'Shopping Cart'
+    }
+    return render(request, 'marketplace/cart.html', context)
+
+def checkout(request):
+    if request.user.is_authenticated:
+        customer = request.user
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        items = order.orderitem_set.all()
+    else:
+        items = []
+        order = {'get_cart_total': 0, 'get_cart_items': 0}
+    
+    context = {
+        'items': items,
+        'order': order,
+        'title': 'Checkout'
+    }
+    return render(request, 'marketplace/checkout.html', context)
+
+def update_item(request):
+    data = json.loads(request.body)
+    productId = data['productId']
+    action = data['action']
+    
+    customer = request.user
+    product = Product.objects.get(id=productId)
+    
+    order, created = Order.objects.get_or_create(customer=customer, complete=False)
+    orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
+    
+    if action == 'add':
+        orderItem.quantity = (orderItem.quantity + 1)
+    elif action == 'remove':
+        orderItem.quantity = (orderItem.quantity - 1)
+    
+    orderItem.save()
+    
+    if orderItem.quantity <= 0:
+        orderItem.delete()
+    
+    return JsonResponse('Item was added', safe=False)
