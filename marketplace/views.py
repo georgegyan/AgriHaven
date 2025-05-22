@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.db import transaction
-from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, ProductForm, ContactForm
+from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, ProductForm
 from .models import Product, Farm, Profile, ProductCategory, Order, OrderItem, Review
 from django.core.mail import send_mail
 import json
@@ -27,21 +27,21 @@ def about(request):
 def contact(request):
     return render(request, 'marketplace/contact.html', {'title': 'Contact Us'})
 
-def contact(request):
-    if request.method == 'POST':
-        form = ContactForm(request.POST)
-        if form.is_valid():
-            # Process form and send email
-            send_mail(
-                'Contact Form Submission',
-                form.cleaned_data['message'],
-                form.cleaned_data['email'],
-                ['your@email.com'],
-            )
-            return redirect('contact_success')
-    else:
-        form = ContactForm()
-    return render(request, 'marketplace/contact.html', {'form': form})
+# def contact(request):
+#     if request.method == 'POST':
+#         form = ContactForm(request.POST)
+#         if form.is_valid():
+#             # Process form and send email
+#             send_mail(
+#                 'Contact Form Submission',
+#                 form.cleaned_data['message'],
+#                 form.cleaned_data['email'],
+#                 ['your@email.com'],
+#             )
+#             return redirect('contact_success')
+#     else:
+#         form = ContactForm()
+#     return render(request, 'marketplace/contact.html', {'form': form})
 
 def privacy(request):
     return render(request, 'marketplace/privacy.html', {'title': 'Privacy Policy'})

@@ -61,45 +61,45 @@
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="bg-dark text-white py-4 mt-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <h5>AgriHaven</h5>
-                    <p>Connecting you directly with local farmers for fresh, sustainable produce.</p>
-                </div>
-                <div class="col-md-2">
-                    <h5>Links</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="{% url 'about' %}" class="text-white">About</a></li>
-                        <li><a href="{% url 'contact' %}" class="text-white">Contact</a></li>
-                        <li><a href="{% url 'privacy' %}" class="text-white">Privacy Policy</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-4">
-                    <h5>Newsletter</h5>
-                    <form>
-                        <div class="input-group mb-3">
-                            <input type="email" class="form-control" placeholder="Your email">
-                            <button class="btn btn-success" type="submit">Subscribe</button>
-                        </div>
-                    </form>
-                </div>
-                <div class="col-md-2">
-                    <h5>Follow Us</h5>
-                    <div class="social-links">
-                        <a href="#" class="text-white me-2"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="text-white me-2"><i class="bi bi-twitter"></i></a>
-                        <a href="#" class="text-white me-2"><i class="bi bi-instagram"></i></a>
-                    </div>
-                </div>
+    <footer class="bg-dark text-white py-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5>AgriHaven</h5>
+                <p>Connecting you directly with local farmers for fresh, sustainable produce.</p>
             </div>
-            <hr>
-            <div class="text-center">
-                <small>&copy; 2023 AgriHaven. All rights reserved.</small>
+            <div class="col-md-2">
+                <h5>Links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="{% url 'about' %}" class="text-white">About</a></li>
+                    <li><a href="{% url 'contact' %}" class="text-white">Contact</a></li>
+                    <li><a href="{% url 'privacy' %}" class="text-white">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h5>Newsletter</h5>
+                <form class="mb-3">
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="Your email">
+                        <button class="btn btn-success" type="submit">Subscribe</button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-2">
+                <h5>Follow Us</h5>
+                <div class="social-links">
+                    <a href="#" class="text-white me-2"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="text-white me-2"><i class="bi bi-twitter"></i></a>
+                    <a href="#" class="text-white me-2"><i class="bi bi-instagram"></i></a>
+                </div>
             </div>
         </div>
-    </footer>
+        <hr class="bg-light">
+        <div class="text-center">
+            <small>&copy; 2023 AgriHaven. All rights reserved</small>
+        </div>
+    </div>
+</footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'js/main.js' %}"></script>

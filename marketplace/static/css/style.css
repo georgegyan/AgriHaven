@@ -35,6 +35,28 @@
     font-size: 1.2rem;
 }
 
+/* Fixed footer styles */
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+footer {
+    flex-shrink: 0;
+    background-color: #343a40;
+    color: white;
+    padding: 20px 0;
+    margin-top: 40px;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .hero-section img {
