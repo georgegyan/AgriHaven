@@ -34,3 +34,8 @@ class ProductForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['image'].required = False
+
+class ImageUploadForm(forms.Form):
+    title = forms.CharField(max_length=100)
+    image = forms.ImageField()
+    description = forms.CharField(widget=forms.Textarea)

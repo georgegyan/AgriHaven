@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.db import transaction
-from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, ProductForm
+from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm, ProductForm, ImageUploadForm
 from .models import Product, Farm, Profile, ProductCategory, Order, OrderItem, Review
 from django.core.mail import send_mail
 import json
@@ -259,3 +259,15 @@ def update_item(request):
         orderItem.delete()
     
     return JsonResponse('Item was added', safe=False)
+
+def upload_image(request):
+    if request.method == 'POST':
+        form = ImageUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            # Process the image
+            image = form.cleaned_data['image']
+            # Save to model or process as needed
+            return redirect('success_page')
+    else:
+        form = ImageUploadForm()
+    return render(request, 'upload.html', {'form': form})
